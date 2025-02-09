@@ -2,7 +2,7 @@
 
 This project implements a Content-Based Image Retrieval system using a graphical interface and a combination of feature extraction, clustering, and database techniques.
 
-![Screenshot of the CBIR System](screenshot.png)
+![Screenshot of the CBIR System](Screenshot.png)
 
 
 ## Overview
