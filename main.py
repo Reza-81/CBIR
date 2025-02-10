@@ -183,7 +183,13 @@ class CBIRApp:
 
             # Configure row growth
             self.results_content.grid_rowconfigure(row, weight=1)
-    
+
+        # Make the canvas scrollable with the mouse wheel
+        self.results_canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
+
+    def _on_mouse_wheel(self, event):
+        self.results_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        
     def collect_feedback(self):
         relevant_paths = [path for path, var in self.relevant_images if var.get()]
         non_relevant_paths = [path for path, var in self.non_relevant_images if var.get()]
@@ -192,18 +198,16 @@ class CBIRApp:
             messagebox.showinfo("Info", "No feedback provided.")
             return
 
-        # MODIFIED: Extract and accumulate features
+        # MODIFIED: Extract and accumulate features from database
         new_relevant = []
         new_non_relevant = []
         
         for path in relevant_paths:
-            img = cv2.imread(path)
-            features = self.feature_extractor.extract_features(img)
+            features = self.db.get_image_features(path)
             new_relevant.append(features)
             
         for path in non_relevant_paths:
-            img = cv2.imread(path)
-            features = self.feature_extractor.extract_features(img)
+            features = self.db.get_image_features(path)
             new_non_relevant.append(features)
         
         # Add to accumulated vectors
