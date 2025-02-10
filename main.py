@@ -1,3 +1,4 @@
+import sqlite3
 import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
 from PIL import Image, ImageTk
@@ -8,6 +9,9 @@ import os
 import numpy as np
 import hashlib  # ADD THIS AT THE TOP WITH OTHER IMPORTS
 
+# Database configuration
+DATABASE = 'cbir.db'  # ADD THIS AT THE TOP WITH OTHER GLOBALS
+
 class CBIRApp:
     def __init__(self, root):
         self.root = root
@@ -15,7 +19,7 @@ class CBIRApp:
         
         # Initialize backend components
         self.feature_extractor = SimilaritySystem()
-        self.db = DatabaseHandler()
+        self.db = DatabaseHandler(connection=sqlite3.connect(DATABASE, check_same_thread=False))
         
         # NEW: Feedback persistence variables
         self.current_query_hash = None
@@ -259,7 +263,7 @@ class CBIRApp:
             cursor.execute("SELECT path, features FROM images WHERE rowid=?", (int(idx)+1,))
             row = cursor.fetchone()
             if row:
-                path, features_blob = row
+                path = row[0]
                 normalized_score = (score + 1) / 2
                 results.append((path, float(normalized_score)))
 
@@ -290,7 +294,7 @@ class CBIRApp:
             self.db.delete_image(os.path.relpath(file_path))
             messagebox.showinfo("Success", "Image deleted from database.")
     
-    def on_frame_configure(self, event):
+    def on_frame_configure(self, _):
         self.results_canvas.configure(scrollregion=self.results_canvas.bbox("all"))
 
 if __name__ == "__main__":
