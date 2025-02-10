@@ -1,9 +1,8 @@
 # Content-Based Image Retrieval (CBIR) System
 
-This project implements a Content-Based Image Retrieval system using a graphical interface and a combination of feature extraction, clustering, and database techniques.
+This project implements a Content-Based Image Retrieval system using both a graphical interface and a web service. It combines feature extraction, clustering, and database techniques to retrieve similar images based on content.
 
 ![Screenshot of the CBIR System](Screenshot.png)
-
 
 ## Overview
 
@@ -35,7 +34,6 @@ This project implements a Content-Based Image Retrieval system using a graphical
     4. **Refined Search:** The adjusted query vector is used to perform a new search, yielding more accurate results.
     This iterative process continues until the user is satisfied with the search results.
 
-
 ## Database Details
 
 The SQLite database is handled by the `DatabaseHandler` class. Key points include:
@@ -46,15 +44,17 @@ The SQLite database is handled by the `DatabaseHandler` class. Key points includ
 
 ## How to Use the Project
 
+### GUI Application
+
 1. **Installation:**
      - Ensure Python is installed along with required libraries: Tkinter, OpenCV, PIL, sklearn, FAISS, rembg, and tqdm.
      - Clone the project repository and install dependencies using pip:
-         ```
+         ```bash
          pip install -r requirements.txt
          ```
 2. **Starting the Application:**
      - Run the main application:
-         ```
+         ```bash
          python main.py
          ```
      - The Tkinter GUI will launch displaying options to add images, search, or refine search results.
@@ -66,6 +66,28 @@ The SQLite database is handled by the `DatabaseHandler` class. Key points includ
      - Click on "Search" to retrieve the top 10 similar images based on feature similarity.
 5. **Refining Search:**
      - Provide feedback using the "Refine Search" button. The system will update the query features based on user-selected relevant/non-relevant images and return updated results.
+
+### Web Service
+
+1. **Installation:**
+     - Ensure Python is installed along with required libraries: Flask, OpenCV, PIL, sklearn, FAISS, rembg, and tqdm.
+     - Clone the project repository and install dependencies using pip:
+         ```bash
+         pip install -r requirements.txt
+         ```
+2. **Starting the Web Service:**
+     - Run the Flask application:
+         ```bash
+         python app.py
+         ```
+     - The web service will be available at `http://localhost:5000`.
+3. **Uploading Images:**
+     - Use the `/upload` endpoint to upload images.
+     - The endpoint returns a unique filename for the uploaded image.
+4. **Searching Images:**
+     - Use the `/search` endpoint with the unique filename to retrieve the top 10 similar images based on feature similarity.
+5. **Refining Search:**
+     - Use the `/refine_search` endpoint to provide feedback. The system will update the query features based on user-selected relevant/non-relevant images and return updated results.
 
 ## Project Structure
 
@@ -80,6 +102,9 @@ The SQLite database is handled by the `DatabaseHandler` class. Key points includ
     
 - **database.py:**  
     Manages the database connection, persistence of image metadata and features, and fast similarity search using FAISS.
+    
+- **app.py:**  
+    Implements the Flask web service for image upload, search, and relevance feedback.
 
 ## Contributing
 
