@@ -198,3 +198,21 @@ class DatabaseHandler:
         cursor.execute("SELECT path FROM images WHERE rowid=?", (rowid,))
         result = cursor.fetchone()
         return result[0] if result else None
+    
+    def get_image_features(self, image_path: str) -> np.ndarray:
+        """
+        Get the features of an image based on its path
+        
+        Args:
+            image_path (str): Path of the image
+            
+        Returns:
+            np.ndarray: Features of the image
+        """
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT features FROM images WHERE path=?", (image_path,))
+        result = cursor.fetchone()
+        if result:
+            return pickle.loads(result[0])
+        else:
+            raise ValueError("Image not found in database")

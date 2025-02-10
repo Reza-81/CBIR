@@ -102,29 +102,32 @@ def refine_search():
         if filename not in feedback_store:
             feedback_store[filename] = {
                 'relevant': [],
-                'non_relevant': []
+                'non_relevant': [],
+                'query_features': None
             }
         current_feedback = feedback_store[filename]
 
+        db_handler = get_db_handler()
+
         # Process relevant images
         for path in relevant_paths:
-            img = cv2.imread(path)
-            if img is not None:
-                features = feature_extractor.extract_features(img)
-                current_feedback['relevant'].append(features)
+            features = db_handler.get_image_features(path)
+            current_feedback['relevant'].append(features)
 
         # Process non-relevant images
         for path in non_relevant_paths:
-            img = cv2.imread(path)
-            if img is not None:
-                features = feature_extractor.extract_features(img)
-                current_feedback['non_relevant'].append(features)
+            features = db_handler.get_image_features(path)
+            current_feedback['non_relevant'].append(features)
 
-        # Load and process query image
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)  # Use the unique filename
-        query_image = cv2.imread(filepath)
-        original_features = feature_extractor.extract_features(query_image)
-        original_features = original_features / np.linalg.norm(original_features)
+        # Load and process query image if not already processed
+        if current_feedback['query_features'] is None:
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)  # Use the unique filename
+            query_image = cv2.imread(filepath)
+            original_features = feature_extractor.extract_features(query_image)
+            original_features = original_features / np.linalg.norm(original_features)
+            current_feedback['query_features'] = original_features
+        else:
+            original_features = current_feedback['query_features']
 
         # Compute average relevant features
         avg_relevant = np.zeros_like(original_features)
@@ -149,7 +152,6 @@ def refine_search():
         refined_query /= np.linalg.norm(refined_query)
 
         # Perform search with refined features
-        db_handler = get_db_handler()
         distances, indices = db_handler.index.search(np.array([refined_query]).astype('float32'), k=10)
         
         results = []
