@@ -107,7 +107,7 @@ function displayResults(results) {
             <img src="${result.url}" class="result-image">
             <div class="feedback-controls">
                 <label><input type="checkbox" class="relevant-checkbox" data-path="${result.path}"> Relevant</label>
-                <label><input type="checkbox" class="non-relevant-checkbox" data-path="${result.path}"> Non-relevant</label>
+                <label><input type="checkbox" class="non-relevant-checkbox" data-path="${result.path}"> Irrelevant</label>
             </div>
             <div class="result-score">Similarity: ${result.score.toFixed(4)}</div>
         `;
